@@ -1,0 +1,175 @@
+{
+  "directoryStructure": {
+    "dataBase": {
+      "conn": "\\\\srvfile01\\bdgeocientifica$\\PotencialMineroMetalico_Addin\\conn\\bdgeocat_publ_gis.sde",
+      "entityUsed": {
+        "departamento": {
+          "fdname": "DATA_GIS.DS_BASE_CATASTRAL_GEOWGS84",
+          "fcname": "DATA_GIS.GPO_DEP_DEPARTAMENTO",
+          "fullname": "DATA_GIS.DS_BASE_CATASTRAL_GEOWGS84\\DATA_GIS.GPO_DEP_DEPARTAMENTO",
+          "fieldSql": "NM_DEPA"
+        },
+        "catastro": {
+          "fcname": "GPO_CMI_CATASTRO_MINERO_G84"
+        }
+      },
+      "sqlSpatial": {
+        "fieldSelect": "OBJECTID, SHAPE, LEYENDA, NATURALEZA",
+        "fromfc": "GPO_CMI_CATASTRO_MINERO_G84",
+        "where": "(LEYENDA = 'TITULADO') AND (NATURALEZA = 'M')",
+        "uniqueField": "OBJECTID"
+      }
+    },
+    "nameElements": {
+      "modelId": "PM__",
+      "folderMain": "PM_Region",
+      "gdb": "POTENCIAL_MINERO",
+      "fds": {
+        "insumos": "FD1_INSUMOS",
+        "variables": "FD2_VARIABLES"
+      },
+      "fcs": {
+        "region": "PM_V0_Region",
+        "catastro": "PM_V0_CatastroMinero",
+        "geologia": "PM_V1_UnidadesGeologicas",
+        "fallas": "PM_V3_FallasGeologicas",
+        "depositos": "PM_V4_DepositosMinerales",
+        "sensores": "PM_V6_SensoresRemotos"
+      }
+    },
+    "featureClass": {
+      "geologia": {
+        "nombre": "PM_V1_UnidadesGeologicas",
+        "esrijson": {
+          "displayFieldName": "",
+          "fieldAliases": {
+            "CODI": "CODI",
+            "GRADO": "GRADO",
+            "VALOR": "VALOR",
+            "CONDICION": "CONDICION"
+          },
+          "geometryType": "esriGeometryPolygon",
+          "fields": [
+            {
+              "name": "CODI",
+              "type": "esriFieldTypeSmallInteger",
+              "alias": "CODI",
+              "length": 4
+            },
+            {
+              "name": "GRADO",
+              "type": "esriFieldTypeString",
+              "alias": "GRADO",
+              "length": 50
+            },
+            {
+              "name": "VALOR",
+              "type": "esriFieldTypeDouble",
+              "alias": "VALOR"
+            },
+            {
+              "name": "CONDICION",
+              "type": "esriFieldTypeString",
+              "alias": "CONDICION",
+              "length": 50
+            }
+          ],
+          "features": []
+        }
+      },
+      "fallas": {
+        "nombre": "PM_V3_FallasGeologicas",
+        "esrijson": {
+          "displayFieldName": "",
+          "fieldAliases": {
+            "CODI": "CODI",
+            "DESCRIPCION": "DESCRIPCION"
+          },
+          "geometryType": "esriGeometryPolyline",
+          "fields": [
+            {
+              "name": "CODI",
+              "type": "esriFieldTypeSmallInteger",
+              "alias": "CODI",
+              "length": 4
+            },
+            {
+              "name": "DESCRIPCION",
+              "type": "esriFieldTypeString",
+              "alias": "DESCRIPCION",
+              "length": 50
+            }
+          ],
+          "features": []
+        }
+      },
+      "depositos": {
+        "nombre": "PM_V4_DepositosMinerales",
+        "esrijson": {
+          "displayFieldName": "",
+          "fieldAliases": {
+            "GRADO": "GRADO",
+            "VALOR": "VALOR"
+          },
+          "geometryType": "esriGeometryPolygon",
+          "fields": [
+            {
+              "name": "GRADO",
+              "type": "esriFieldTypeString",
+              "alias": "GRADO",
+              "length": 50
+            },
+            {
+              "name": "VALOR",
+              "type": "esriFieldTypeDouble",
+              "alias": "VALOR"
+            }
+          ],
+          "features": []
+        }
+      },
+      "sensores": {
+        "nombre": "PM_V6_SensoresRemotos",
+        "esrijson": {
+          "displayFieldName": "",
+          "fieldAliases": {
+            "TIPO_ARC": "TIPO_ARC",
+            "TIPO_OXI": "TIPO_OXI",
+            "TIPO": "TIPO"
+          },
+          "geometryType": "esriGeometryPolygon",
+          "fields": [
+            {
+              "name": "TIPO_ARC",
+              "type": "esriFieldTypeString",
+              "alias": "TIPO_ARC",
+              "length": 50
+            },
+            {
+              "name": "TIPO_OXI",
+              "type": "esriFieldTypeString",
+              "alias": "TIPO_OXI",
+              "length": 50
+            },
+            {
+              "name": "TIPO",
+              "type": "esriFieldTypeString",
+              "alias": "TIPO",
+              "length": 50
+            }
+          ],
+          "features": []
+        }
+      }
+    },
+    "msg": {
+      "e2": "Sucedio un error, vuelve a intertarlo."
+    }
+  },
+  "unidadesGeologicas": {},
+  "fallasGeologicas": {},
+  "depositosMinerales": {},
+  "geoquimica": {},
+  "sensoresRemotos": {},
+  "potencialMinero": {}
+}

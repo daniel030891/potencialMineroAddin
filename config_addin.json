@@ -1,0 +1,22 @@
+{
+  "tbx": {
+    "path": "\\\\srvfile01\\bdgeocientifica$\\PotencialMineroMetalico_Addin\\tbx\\PotencialMinero.tbx",
+    "tools": {
+      "ug": "unidadesGeologicas",
+      "fg": "fallasGeologicas",
+      "dm": "depositosMinerales",
+      "gq": "geoquimica",
+      "sr": "sensoresRemotos",
+      "ed": "EstructuraDirectorio",
+      "pm": "PotencialMinero"
+    }
+  },
+  "urlmanual": "http://www.ingemmet.gob.pe/",
+  "error": {
+    "e1": {
+      "title": "Advertencia",
+      "desc": "Error...",
+      "tipo": 0
+    }
+  }
+}
