@@ -5,7 +5,7 @@ import threading
 import json
 
 
-jsonfile = open(r'\\srvfile01\bdgeocientifica$\PotencialMineroMetalico_Addin\config_addin.json')
+jsonfile = open(r'\\srvfile01/bdgeocientifica$/Addins_Geoprocesos\PotencialMinero\scripts\config_addin.json')
 config = json.load(jsonfile)
 jsonfile.close()
 del jsonfile

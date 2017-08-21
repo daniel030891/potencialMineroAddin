@@ -6,7 +6,7 @@ import json
 
 # |||||||||||||||||||||||||||||||||||||||||||||||   CONFIGURACION  |||||||||||||||||||||||||||||||||||||||||||||||
 																											   #||
-config= r'\\srvfile01\bdgeocientifica$\PotencialMineroMetalico_Addin\config_tools.json'                        #||
+config= r'\\srvfile01\bdgeocientifica$\Addins_Geoprocesos\PotencialMinero\scripts\config_tools.json'           #||
 																				  							   #||
 # ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
@@ -88,5 +88,6 @@ class directorios:
 if __name__ == "__main__":
 	obj = directorios()
 	obj.main()
+
 
 
