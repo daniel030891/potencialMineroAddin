@@ -1,114 +1,118 @@
 import arcpy
 import os
+import json
 
 
 arcpy.env.overwriteOutput = True
 
 
-ws = arcpy.GetParameterAsText(0)
-fc = arcpy.GetParameterAsText(1)
-codi = arcpy.GetParameterAsText(2)
-grado = arcpy.GetParameterAsText(3)
-valor = arcpy.GetParameterAsText(4)
-condicion = arcpy.GetParameterAsText(5)
+jsonfile = open(r'\\srvfile01\bdgeocientifica$\Addins_Geoprocesos\PotencialMinero\scripts\config_tools.json', 'r')
+configTmp = json.load(jsonfile)
+config = configTmp["unidadesGeologicas"]
+jsonfile.close()
+del jsonfile
 
 
-parametros = arcpy.GetParameterInfo()
-
-
-def consistencia_01_Grado(fc=fc, grado=grado):
-	arcpy.AddMessage(" Evaluando el campo GRADO: {}...".format(grado))
-	informacion = []
-	errores = [[1, x[0], x[1]] for x in arcpy.da.SearchCursor(fc, ["OID@", grado]) if x[1] not in ['Muy alto', 'Alto', 'Medio', 'Bajo', 'Muy bajo']]
-	if len(errores) != 0:
-		informacion.extend(errores)
-	else:
-		pass
-	return informacion
-
-
-
-def consistencia_02_Valor(fc=fc, valor=valor):
-	arcpy.AddMessage(" Evaluando el campo VALOR: {}...".format(valor))
-	informacion = []
-	errores = [[2, x[0], x[1]] for x in arcpy.da.SearchCursor(fc, ["OID@", valor]) if x[1] < 1.2 and x[1] > 3.0]
-	if len(errores) != 0:
-		informacion.extend(errores)
-	else:
-		pass
-	return informacion
+class unidGeo:
+	def __init__(self):
+		self.ws = arcpy.GetParameterAsText(0)
+		self.fc = arcpy.GetParameterAsText(1)
+		self.codi = arcpy.GetParameterAsText(2)
+		self.grade = arcpy.GetParameterAsText(3)
+		self.value = arcpy.GetParameterAsText(4)
+		self.condition = arcpy.GetParameterAsText(5)
+		self.params = arcpy.GetParameterInfo()
+		self.domains= config["domains"]
+		self.msg = config["msg"]
+		self.error = config["error"]
+		self.information = []
 
 
 
-def consistencia_03_Condicion(fc=fc, condicion=condicion):
-	arcpy.AddMessage(" Evaluando el campo CONDICION: {}...".format(condicion))
-	informacion = []
-	errores = [[3, x[0], x[1]] for x in arcpy.da.SearchCursor(fc, ["OID@", condicion]) if x[1] not in ['Metalotecto', 'No metalotecto']]
-	if len(errores) != 0:
-		informacion.extend(errores)
-	else:
-		pass
-	return informacion
-
-
-
-def consistencia_04_Nulos(fc=fc, parametros=parametros):
-	informacion = []
-	for x in parametros[2:6]:
-		for m in arcpy.da.SearchCursor(fc, [x.valueAsText]):
-			if m[0] == None:
-				informacion.append([4, x.valueAsText])
-				break
-			else:
-				pass
-	return informacion
-
-
-
-def main(fc=fc, ws=ws, codi=codi, grado=grado, valor=valor, condicion=condicion):
-	informacion = []
-	arcpy.AddMessage("\n Evaluando la existencia de la GeodataBase: {}... ".format(ws))
-	try:
-		desc = arcpy.Describe(ws)
-		if desc.datatype == u'Workspace':
-			if arcpy.Exists(os.path.join(ws, 'FD1_INSUMOS', 'PM_V1_UnidadesGeologicas')):
-				cons01 = consistencia_01_Grado()
-				cons02 = consistencia_02_Valor()
-				cons03 = consistencia_03_Condicion()
-				cons04 = consistencia_04_Nulos()
-				if len(cons01) > 0 or len(cons02) > 0 or len(cons03) > 0 or len(cons04) > 0:
-					informacion.extend(cons01)
-					informacion.extend(cons02)
-					informacion.extend(cons03)
-					informacion.extend(cons04)
-					arcpy.AddMessage("   Errores:")
-					for x in informacion:
-						if x[0] == 1:
-							arcpy.AddWarning("	FID: {} | CAMPO: GRADO | Descripcion: El valor ingresado'{}' no es correcto...".format(x[1], x[2]))
-						elif x[0] == 2:
-							arcpy.AddWarning("	FID: {} | CAMPO: VALOR |  Descripcion: El valor ingresado '{}' no es correcto...".format(x[1], x[2]))
-						elif x[0] == 3:
-							arcpy.AddWarning("	FID: {} | CAMPO: CONDICION | Descripcion: El valor ingresado '{}' no es correcto...".format(x[1], x[2]))
-						elif x[0] == 4:
-							arcpy.AddWarning("	CAMPO: {} | Descripcion: Contiene valores nulos".format(x[1]))
-				else:
-					arcpy.AddMessage(" Realizando la carga de informacion...")
-					copia = arcpy.CopyFeatures_management(fc, "in_memory\\unidadesGeologicas")
-					campos = {"CODI": codi, "GRADO": grado, "VALOR": valor, "CONDICION": condicion}
-					arcpy.DeleteRows_management(os.path.join(ws, 'FD1_INSUMOS', 'PM_V1_UnidadesGeologicas'))
-					for k, v in campos.items():
-						arcpy.AlterField_management(copia, v, k)
-					arcpy.Append_management(copia, os.path.join(ws, 'FD1_INSUMOS', 'PM_V1_UnidadesGeologicas'), "NO_TEST")
-					arcpy.SetParameterAsText(6, os.path.join(ws, 'FD1_INSUMOS', 'PM_V1_UnidadesGeologicas'))
-					arcpy.AddMessage("\n La carga de informacion concluyo correctamente... \n")
-			else:
-				arcpy.AddWarning("\n El espacio de trabajo agregado no es correcto o el feature class PM_V1_UnidadesGeologicas no existe... \n")
+	def consistency_01_Grade(self):
+		arcpy.AddMessage("\n {}: {}...".format(self.msg["m1"], self.grade))
+		errores = [[1, x[0], x[1].lower()] for x in arcpy.da.SearchCursor(self.fc, ["OID@", self.grade]) if x[1].lower() not in self.domains["grade"]]
+		if len(errores) != 0:
+			self.information.extend(errores)
 		else:
-			arcpy.AddWarning("\n El espacio de trabajo agregado no es el correcto... \n")
-	except Exception as e:
-		arcpy.AddWarning("\n"+ " " + e.message + "\n")
-	arcpy.AddMessage(" Proceso finalizado \n")
+			pass
+
+
+	def consistency_02_Value(self):
+		arcpy.AddMessage(" {}: {}...".format(self.msg["m2"], self.value))
+		errores = [[2, x[0], x[1]] for x in arcpy.da.SearchCursor(self.fc, ["OID@", self.value]) if x[1] < self.domains["value"]["min"] and x[1] > self.domains["value"]["max"]]
+		if len(errores) != 0:
+			self.information.extend(errores)
+		else:
+			pass
+
+
+	def consistency_03_Condition(self):
+		arcpy.AddMessage(" {}: {}...".format(self.msg["m3"], self.condition))
+		errores = [[3, x[0], x[1].lower()] for x in arcpy.da.SearchCursor(self.fc, ["OID@", self.condition]) if x[1].lower() not in self.domains["condition"]]
+		if len(errores) != 0:
+			self.information.extend(errores)
+		else:
+			pass
+
+
+	def consistency_04_Nulls(self):
+		arcpy.AddMessage(" {}...".format(self.msg["m4"]))
+		for x in self.params[2:6]:
+			for m in arcpy.da.SearchCursor(self.fc, ["OID@", x.valueAsText]):
+				if m[0] == None:
+					self.information.append([4, x.valueAsText])
+				else:
+					pass
+
+
+
+	def process(self):
+		arcpy.AddMessage("\n {}: {}... ".format(self.msg["m5"], os.path.basename(self.ws)))
+		try:
+			desc = arcpy.Describe(self.ws)
+			if desc.datatype == u'Workspace':
+				if arcpy.Exists(os.path.join(self.ws, 'FD1_INSUMOS', 'PM_V1_UnidadesGeologicas')):
+					if len(self.information) > 0:
+						arcpy.AddMessage("  Errores:")
+						for x in self.information:
+							e = self.error["e{}".format(x[0])]
+							arcpy.AddWarning("   {}: FID: {}, Valor: {}".format(e, x[1], x[2]))
+					else:
+						arcpy.AddMessage("  {}...".format(self.msg["m5"]))
+						copia = arcpy.CopyFeatures_management(self.fc, "in_memory\\unidadesGeologicas")
+						with arcpy.da.UpdateCursor(copia, [self.grade, self.condition]) as cursorUC:
+							for row in cursorUC:
+								row[0], row[1] = row[0].lower(), row[1].lower()
+								cursorUC.updateRow(row)
+						del cursorUC
+						campos = {"CODI": self.codi, "GRADO": self.grade, "VALOR": self.value, "CONDICION": self.condition}
+						arcpy.DeleteRows_management(os.path.join(self.ws, 'FD1_INSUMOS', 'PM_V1_UnidadesGeologicas'))
+						for k, v in campos.items():
+							arcpy.AlterField_management(copia, v, k)
+						arcpy.Append_management(copia, os.path.join(self.ws, 'FD1_INSUMOS', 'PM_V1_UnidadesGeologicas'), "NO_TEST")
+						arcpy.SetParameterAsText(6, os.path.join(self.ws, 'FD1_INSUMOS', 'PM_V1_UnidadesGeologicas'))
+						arcpy.AddMessage("\n {}... \n".format(self.msg["m6"]))
+						arcpy.AddMessage(" {} \n".format(self.msg["m7"]))
+				else:
+					raise RuntimeError("\n {}... \n".format(self.error["e5"]))
+			else:
+				raise RuntimeError("\n {}... \n".format(self.error["e6"]))
+		except Exception as e:
+			arcpy.AddWarning(e)
+
+
+
+
+	def main(self):
+		self.consistency_01_Grade()
+		self.consistency_02_Value()
+		self.consistency_03_Condition()
+		self.consistency_04_Nulls()
+		self.process()
+
 
 
 if __name__ == "__main__":
-	main()
+	obj = unidGeo()
+	obj.main()

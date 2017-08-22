@@ -166,7 +166,42 @@
       "e2": "Sucedio un error, vuelve a intertarlo."
     }
   },
-  "unidadesGeologicas": {},
+  "unidadesGeologicas": {
+    "domains": {
+      "grade": [
+        "muy alto",
+        "alto",
+        "medio",
+        "bajo",
+        "muy bajo"
+      ],
+      "value": {
+        "min": 1.2,
+        "max": 3.0
+      },
+      "condition": [
+        "metalotecto",
+        "no metalotecto"
+      ]
+    },
+    "msg": {
+      "m1": "Evaluando el campo 'Grado'",
+      "m2": "Evaluando el campo 'Valor'",
+      "m3": "Evaluando el campo 'Condición'",
+      "m4": "Identificando valores nulos",
+      "m5": " Realizando la carga de information",
+      "m6": "La carga de information concluyó correctamente",
+      "m7": "Proceso finalizado"
+    },
+    "error": {
+      "e1": "Campo 'GRADO' | El valor ingresado no es correcto",
+      "e2": "Campo 'VALOR' | El valor ingresado no es correcto",
+      "e3": "Campo 'CONDICION' | El valor ingresado no es correcto",
+      "e4": "El valor ingresado es nulo",
+      "e5": "El espacio de trabajo agregado no es correcto o el feature class PM_V1_UnidadesGeologicas no existe",
+      "e6": "El espacio de trabajo agregado no es el correcto"
+    }
+  },
   "fallasGeologicas": {},
   "depositosMinerales": {},
   "geoquimica": {},
